@@ -2,6 +2,8 @@
 
 Yolo V9 object detector demo
 
+![demo image](demo.png)
+
 
 ### Installation
 
