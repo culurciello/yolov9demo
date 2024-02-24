@@ -4,9 +4,12 @@
 # from: https://github.com/kadirnar/yolov9-pip (pip install yolov9pip)
 # download model from: https://github.com/WongKinYiu/yolov9?tab=readme-ov-file
 
+# export OMP_NUM_THREADS=16
+
 import numpy as np
 import yolov9
 import cv2
+import time
 
 def generate_colors(n): 
   rgb_values = []
@@ -40,8 +43,8 @@ camera_id = 0
 frameWidth = 640
 frameHeight = 480
 cap = cv2.VideoCapture(camera_id)
-cap.set(3, frameWidth)
-cap.set(4, frameHeight)
+# cap.set(3, frameWidth)
+# cap.set(4, frameHeight)
 
 while True:
     ret, frame = cap.read()
@@ -49,7 +52,10 @@ while True:
         break
 
     # perform inference
+    t = time.time()
     results = model(frame)
+    # results = model(frame, size=frameWidth)
+    t = time.time() - t
 
     # parse results
     predictions = results.pred[0]
@@ -65,6 +71,8 @@ while True:
         cv2.rectangle(frame, (x, y), (x2, y2), colors[cls], 2)
         cv2.putText(frame, model.names[cls], (x, y - 5), 
                     cv2.FONT_HERSHEY_PLAIN, 2, colors[cls], 2)
+        cv2.putText(frame, "FPS: "+str(1/t), (10, 30), 
+                    cv2.FONT_HERSHEY_PLAIN, 1.5, (0,0,255), 2)
 
     # results.show()
     cv2.imshow("Img", frame)
